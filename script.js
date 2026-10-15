@@ -1,5 +1,5 @@
 // Set after deploying apps-script/Code.gs (see README.md). Leave empty to store responses in this browser only.
-const SHEET_ENDPOINT = "";
+const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZlBxM_Vf4g7-JB8jy9XWBHhCbO_DHzLQJnhSuQJ-ox68O8ZxGli_Kq__poFFU06qN/exec";
 
 document.getElementById("yr").textContent = new Date().getFullYear();
 
