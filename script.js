@@ -1,63 +1,70 @@
-// Set to a Formspree (or similar) endpoint to collect leads, e.g. "https://formspree.io/f/xxxxxxx".
-// Left empty, submissions are only stored in this browser's localStorage (useful for local testing).
-const FORM_ENDPOINT = "";
-
-const PLAN_PRICES = { Classroom: 2500, Department: 12000, Campus: 12000 };
-const fmt = (n) => "$" + Math.round(n).toLocaleString("en-US");
+// Set after deploying apps-script/Code.gs (see README.md). Leave empty to store responses in this browser only.
+const SHEET_ENDPOINT = "";
 
 document.getElementById("yr").textContent = new Date().getFullYear();
 
-// Savings calculator (illustrative, uses Department plan price)
-const equip = document.getElementById("calc-equip");
-const students = document.getElementById("calc-students");
-function updateCalc() {
-  const cost = PLAN_PRICES.Department;
-  const s = Math.max(1, Number(students.value) || 1);
-  document.getElementById("calc-cost").textContent = fmt(cost);
-  document.getElementById("calc-per").textContent = fmt(cost / s);
-  document.getElementById("calc-equip-out").textContent = fmt(Number(equip.value) || 0);
-}
-equip.addEventListener("input", updateCalc);
-students.addEventListener("input", updateCalc);
-updateCalc();
-
-// Pre-select plan when a pricing button is clicked
-document.querySelectorAll("[data-plan]").forEach((el) =>
-  el.addEventListener("click", () => {
-    document.getElementById("plan-select").value = el.dataset.plan;
-  })
-);
-
-// Lead form
-const form = document.getElementById("lead-form");
+const form = document.getElementById("survey-form");
 const msg = document.getElementById("form-msg");
+const params = new URLSearchParams(location.search);
+
+function fail(text, el) {
+  msg.className = "err";
+  msg.textContent = text;
+  if (el) el.focus();
+}
+
+// Ordering check: too cheap <= bargain <= expensive <= too expensive, per pricing unit.
+function checkGroup(grp, label) {
+  const v = ["too_cheap", "cheap", "expensive", "too_expensive"].map((k) => form.elements[grp + "_" + k]);
+  const n = v.map((el) => Number(el.value));
+  for (let i = 0; i < 3; i++) {
+    if (n[i] > n[i + 1]) {
+      fail(`${label}: prices should rise from "so cheap I'd doubt it" to "too expensive". Please check your answers.`, v[i + 1]);
+      return false;
+    }
+  }
+  return true;
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   msg.className = "";
+  msg.textContent = "";
+  if (form.elements.website.value) return; // honeypot
   if (!form.checkValidity()) {
-    msg.className = "err";
-    msg.textContent = "Please fill in your name, a valid email, and your university.";
+    fail("Please complete the required fields.", form.querySelector(":invalid"));
     return;
   }
+  if (!checkGroup("dept", "Department license") || !checkGroup("seat", "Per seat")) return;
+
   const data = Object.fromEntries(new FormData(form));
-  data.submittedAt = new Date().toISOString();
+  delete data.website;
+  data.submitted_at = new Date().toISOString();
+  data.src = params.get("src") || ""; // e.g. ?src=linkedin or ?src=prof-smith to track channels
+  data.variant = params.get("v") || ""; // optional label for test variants
+  data.response_id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now() + Math.random());
+
+  const btn = form.querySelector("button[type=submit]");
+  btn.disabled = true;
   try {
-    if (FORM_ENDPOINT) {
-      const res = await fetch(FORM_ENDPOINT, {
+    if (SHEET_ENDPOINT) {
+      // text/plain avoids a CORS preflight, which Apps Script web apps don't answer.
+      await fetch(SHEET_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Request failed");
     } else {
-      const all = JSON.parse(localStorage.getItem("sc-leads") || "[]");
+      const all = JSON.parse(localStorage.getItem("sc-responses") || "[]");
       all.push(data);
-      localStorage.setItem("sc-leads", JSON.stringify(all));
+      localStorage.setItem("sc-responses", JSON.stringify(all));
     }
     form.reset();
-    msg.textContent = "Thanks! We'll be in touch shortly.";
+    msg.textContent = "Thank you! Your answers have been recorded.";
   } catch {
-    msg.className = "err";
-    msg.textContent = "Something went wrong. Please try again.";
+    fail("Something went wrong. Please try again.");
+  } finally {
+    btn.disabled = false;
   }
 });

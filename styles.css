@@ -150,3 +150,12 @@ footer {
   .nav nav a:not(.btn) { display: none; }
   .row { grid-template-columns: 1fr; }
 }
+
+.split.single { grid-template-columns: 1fr; max-width: 760px; }
+#survey-form { max-width: 760px; margin: 0 auto; }
+#survey-form fieldset { border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px 8px; margin: 0 0 20px; background: var(--card); }
+#survey-form legend { padding: 0 8px; font-weight: 700; }
+#survey-form label { display: block; font-size: .9rem; color: var(--muted); margin-bottom: 14px; }
+.hint { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+input:user-invalid, select:user-invalid { border-color: #ff8a8a; }

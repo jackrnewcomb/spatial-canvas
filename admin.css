@@ -1,0 +1,19 @@
+.wrap { max-width: 1000px; margin: 0 auto; padding: 32px 5vw 80px; display: grid; gap: 20px; }
+.admin h2 { text-align: left; font-size: 1.3rem; margin-bottom: 12px; }
+.left { text-align: left; margin-left: 0; }
+.row3 { display: grid; grid-template-columns: 2fr 1fr auto; gap: 12px; align-items: end; }
+.row3 label, .filters label { font-size: .85rem; color: var(--muted); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpis > div { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.kpis strong { display: block; font-size: 1.4rem; color: var(--a); }
+.kpis span { color: var(--muted); font-size: .8rem; }
+.profile { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.profile h4 { margin: 0 0 4px; font-size: .85rem; color: var(--muted); }
+.profile ul { margin: 0; padding-left: 18px; font-size: .88rem; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0; font-size: .85rem; }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 3px; background: var(--c); margin-right: 6px; vertical-align: middle; }
+.lookup { color: var(--muted); }
+.lookup input { width: 110px; display: inline-block; margin: 0 4px; padding: 4px 8px; }
+@media (max-width: 700px) { .row3, .filters { grid-template-columns: 1fr; } }

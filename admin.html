@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Spatial Canvas — Pricing test dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+  <header class="nav">
+    <a class="logo" href="index.html"><span class="logo-mark"></span>Spatial Canvas</a>
+    <span class="fine">Pricing test dashboard (team only)</span>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Load data</h2>
+      <p class="fine left">Pull live responses from the Google Sheet, upload a CSV exported from it, or use this browser's local responses.</p>
+      <div class="row3">
+        <label>Apps Script URL <input id="url" placeholder="https://script.google.com/macros/s/…/exec"></label>
+        <label>Admin token <input id="token" type="password"></label>
+        <button class="btn" id="load-remote">Load from sheet</button>
+      </div>
+      <div class="actions">
+        <label class="btn btn-ghost">Upload CSV <input id="csv" type="file" accept=".csv" hidden></label>
+        <button class="btn btn-ghost" id="load-local">Load local responses</button>
+        <button class="btn btn-ghost" id="download">Download CSV</button>
+        <button class="btn btn-ghost" id="demo">Load demo data</button>
+      </div>
+      <p id="status" class="fine left" role="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>Filter</h2>
+      <div class="filters">
+        <label>Segment field
+          <select id="seg-field">
+            <option value="">All respondents</option>
+            <option value="role">Role</option>
+            <option value="institution_type">Institution type</option>
+            <option value="discipline">Discipline</option>
+            <option value="students_per_year">Students per year</option>
+            <option value="buying_role">Buying role</option>
+            <option value="owns_headsets">Owns headsets</option>
+            <option value="src">Source (?src=)</option>
+            <option value="variant">Variant (?v=)</option>
+          </select>
+        </label>
+        <label>Segment value <select id="seg-value"><option value="">(all)</option></select></label>
+        <label>Min. intent (1–5) <input id="min-intent" type="number" min="1" max="5" value="1"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Summary</h2>
+      <div id="summary" class="kpis"></div>
+      <div id="profile" class="profile"></div>
+    </section>
+
+    <div id="vw-wrap"></div>
+  </main>
+
+  <script src="vw.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
